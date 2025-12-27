@@ -343,6 +343,7 @@
 
             // Función para cancelar turno
             async function cancelTurn(turnCode) {
+                // Limpiar el código (sin espacios)
                 const cleanCode = turnCode ? turnCode.trim().replace(/\s+/g, '') : null;
                 
                 if (!cleanCode || cleanCode === 'N/A' || cleanCode === '-') {
@@ -355,7 +356,7 @@
                 }
 
                 try {
-                    const cancelUrl = `https://mobile.clients.debmedia.com/api/v1/turn/code/${cleanCode}/cancel`;
+                    const cancelUrl = `https://filavirtual2.debmedia.com/api/v1/turn/${cleanCode}/cancel`;
                     console.log('Cancelando turno:', cancelUrl);
                     console.log('Código usado:', cleanCode);
 
@@ -374,24 +375,29 @@
                         throw new Error('Error API (' + res.status + '): ' + extra);
                     }
 
-                    // Si la respuesta es 200 OK, redirigir al formulario original
+                    // Si la respuesta es 200 OK, limpiar formulario y redirigir
                     if (res.status === 200 || res.ok) {
+                        // Detener el polling antes de cerrar
                         stopPolling();
                         
                         showMessage('Su turno ha sido cancelado exitosamente.', 'success');
                         
+                        // Cerrar el modal después de cancelar
                         if (turnSuccessModal) {
                             turnSuccessModal.classList.remove('active');
                         }
 
+                        // Resetear el formulario y ocultar mensajes
                         if (form) {
                             form.reset();
+                            // Resetear reCAPTCHA
                             if (typeof grecaptcha !== 'undefined') {
                                 grecaptcha.reset();
                             }
                         }
                         hideMessage();
 
+                        // Redirigir al formulario original después de un breve delay
                         setTimeout(() => {
                             window.location.reload();
                         }, 1500);
@@ -504,4 +510,9 @@
     </script>
 </body>
 </html>
+
+
+</body>
+</html>
+
 
